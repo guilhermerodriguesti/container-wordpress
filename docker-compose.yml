@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  webserver:
+    build: 
+      context: ./bin/webserver
+    container_name: 'site-wordpress'
+    restart: 'never'
+    ports:
+      - "8011:80"
+      - "8443:443"
+    volumes: 
+      - ${DOCUMENT_ROOT-./WordPress}:/var/www/html
+      - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
+      - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
+      - ${LOG_DIR-./logs/apache2}:/var/log/apache2
