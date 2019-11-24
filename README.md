@@ -15,10 +15,10 @@ git clone do projeto e executar docker-compose up -d
 ```
 
 
-Configure o NGINX, no diretório `/etc/nginx/conf.d/`, crie um arquivo `site-edebe.conf` com o conteúdo:
+Configure o NGINX, no diretório `/etc/nginx/conf.d/`, crie um arquivo `site.conf` com o conteúdo:
 
 ```
-# /var/docker/site_edebe
+# /var/docker/site_wordpress
     server {
         listen 80;
 
@@ -26,37 +26,37 @@ Configure o NGINX, no diretório `/etc/nginx/conf.d/`, crie um arquivo `site-ede
         proxy_send_timeout          600;
         proxy_read_timeout          600;
         send_timeout                600;
-        server_name wwwelb.edebe.com.br sitev2.edebe.com.br www.edebe.com.br edebe.com.br www2.edebe.com.br www312.edebe.com.br;
-
-        #rewrite ^/(.*)$ http://www.edebe.com.br/$1 permanent;
+         server_name site.com.br;
+         
+        
         location / {
             proxy_set_header   X-Real-IP $remote_addr;
             proxy_set_header   Host      $http_host;
-            proxy_set_header   Host      www.edebe.com.br;
+            proxy_set_header   Host      www.site.com.br;
             proxy_pass         http://127.0.0.1:8011;
         }
     }
 
 
-# /var/docker/site_edebe
+# /var/docker/site_wordpress
     server {
         listen 443 ssl;
 
-        ssl_certificate edebe.nokey.pem;
-        ssl_certificate_key kedebe.key;
+        ssl_certificate MyWildCertificat.pem;
+        ssl_certificate_key MySecretKey.key;
 
         proxy_connect_timeout       600;
         proxy_send_timeout          600;
         proxy_read_timeout          600;
         send_timeout                600;
-        server_name wwwelb.edebe.com.br sitev2.edebe.com.br www.edebe.com.br edebe.com.br www2.edebe.com.br www312.edebe.com.br;
+        server_name site.com.br;
         
-        #rewrite ^/(.*)$ http://www.edebe.com.br/$1 permanent;
+  
         
         location / {
             proxy_set_header   X-Real-IP $remote_addr;
             proxy_set_header   Host      $http_host;
-            proxy_set_header   Host      www.edebe.com.br;
+            proxy_set_header   Host      www.site.com.br;
             proxy_pass         http://127.0.0.1:8011;
         }
     }
@@ -69,11 +69,11 @@ Reinicie o Nginx: `systemctl restart nginx.service`
 ## Verificar logs do Servidor NGINX!
 
 ```
-tail -f access_log /var/log/nginx/site-edebe.access.log
-tail -f error_log /var/log/nginx/site-edebe.error.log
+tail -f access_log /var/log/nginx/site.access.log
+tail -f error_log /var/log/nginx/site.error.log
 ```
 ## Verificar logs do Container APACHE!
 ```
-tail -f /var/docker/site-edebe/logs/apache2/site.edebe.com.br-access_log
-tail -f /var/docker/site-edebe/logs/apache2/site.edebe.com.br-error_log
+tail -f /var/docker/site_wordpress/logs/apache2/site-access_log
+tail -f /var/docker/site_worpress/logs/apache2/site-error_log
 ```
